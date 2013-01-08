@@ -14,5 +14,6 @@ Algorithms
 12. Hashing
 13. String
 14. Greedy
-15. Dynamic
+15. Dynamic Programming
+
 ==========
