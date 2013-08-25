@@ -230,6 +230,18 @@ public class ListNode
     return tempNode;
   }
 
+  public static ListNode reverseListRecursion(ListNode node)
+  {
+    if (node == null || node.next == null)
+      return node;
+
+    ListNode head = reverseListRecursion(node.next);
+    (node.next).next = node;
+    node.next = null;
+
+    return head;
+  }
+
   public static int middleOfList(ListNode head)
   {
     ListNode slowNode = head;
@@ -276,7 +288,7 @@ public class ListNode
     {
       data = 0;
       position = 0;
-      System.out.println("Enter\n1. AddtoList\n2. PrintList\n3. DeleteNode\n4. FindFromNthNode\n5. ReverseList\n6. Middle\n7. ReversePrint\n9. DefaultExit\n");
+      System.out.println("Enter\n1. AddtoList\n2. PrintList\n3. DeleteNode\n4. FindFromNthNode\n5. ReverseList\n6. Middle\n7. ReversePrint\n8. ReverseRecursion\n9. DefaultExit\n");
     switch (in.nextInt())
     {
       case 1: 
@@ -313,6 +325,9 @@ public class ListNode
       break;
       case 7:
       printReverse(head);
+      break;
+      case 8:
+      head = reverseListRecursion(head);
       break;
       default:
       System.exit(0);
