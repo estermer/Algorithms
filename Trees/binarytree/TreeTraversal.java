@@ -162,6 +162,57 @@ public class TreeTraversal<T> {
     return (sum == 0) || left || right;
   }
 
+  public int add(BinaryTree<Integer> root) {
+    int left = 0, right = 0;
+    int sum = 0;
+
+    if (root != null) {
+      left = add(root.left);
+      right = add(root.right);
+      sum = root.value + left + right;
+    }
+    return sum;
+  }
+
+  public int addNoRecursion(BinaryTree<Integer> root) {
+    Queue<BinaryTree> q = new LinkedList<BinaryTree>();
+    q.add(root);
+
+    int sum = 0;
+    while(!q.isEmpty()) {
+      BinaryTree<Integer> node = q.poll();
+      sum = sum + node.value;
+      if(node.left != null)
+        q.add(node.left);
+      if(node.right != null)
+        q.add(node.right);
+    }
+    return sum;
+  }
+
+  public BinaryTree<Integer> mirrorTree(BinaryTree<Integer> root) {
+    BinaryTree<Integer> temp;
+    if(root != null) {
+      mirrorTree(root.left);
+      mirrorTree(root.right);
+      // Swap
+      temp = root.left;
+      root.left = root.right;
+      root.right = temp;
+    }
+    return root;
+  }
+
+  public boolean isMirror(BinaryTree<Integer> root1, BinaryTree<Integer> root2) {
+    if(root1 == null && root2 == null)
+      return true;
+    if(root1 == null || root2 == null)
+      return false;
+    if(root1.value != root2.value)
+      return false;
+    else return isMirror(root1.left, root2.right) && isMirror(root1.right, root2.left);
+  }
+
   public static void main(String[] args) {
     BinaryTree<Integer> root = new BinaryTree<Integer>();
     BinaryTree<Integer> n1 = new BinaryTree<Integer>();
@@ -220,5 +271,9 @@ public class TreeTraversal<T> {
     System.out.println(t.treeDiameter(root));
     System.out.println("Has Sum");
     System.out.println(t.hasSum(root, 11));
+    System.out.println("Sum");
+    System.out.println(t.add(root));
+    System.out.println("Sum without recursion");
+    System.out.println(t.addNoRecursion(root));
   }
 }
