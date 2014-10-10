@@ -213,6 +213,36 @@ public class TreeTraversal<T> {
     else return isMirror(root1.left, root2.right) && isMirror(root1.right, root2.left);
   }
 
+  public BinaryTree<Integer> lca(BinaryTree<Integer> root, BinaryTree<Integer> node1, BinaryTree<Integer> node2) {
+    if(root == null)
+      return null;
+    if(root == node1 || root == node2)
+      return root;
+    
+    BinaryTree<Integer> left = lca(root.left, node1, node2);
+    BinaryTree<Integer> right = lca(root.right, node1, node2);
+
+    if(left != null && right != null)
+      return root;
+
+    return (left != null? left : right);
+  }
+
+  public boolean checkIfBst(BinaryTree<Integer> root) {
+    return isBst(root, -1);
+  }
+
+  public boolean isBst(BinaryTree<Integer> root, int previos) {
+    if(root == null)
+      return true;
+    if(!isBst(root.left, previos))
+      return false;
+    if(root.value < previos)
+      return false;
+    previos = root.value;
+    return isBst(root.right, previos);
+  }
+
   public static void main(String[] args) {
     BinaryTree<Integer> root = new BinaryTree<Integer>();
     BinaryTree<Integer> n1 = new BinaryTree<Integer>();
@@ -275,5 +305,9 @@ public class TreeTraversal<T> {
     System.out.println(t.add(root));
     System.out.println("Sum without recursion");
     System.out.println(t.addNoRecursion(root));
+    System.out.println("LCA");
+    System.out.println((t.lca(root, n8, n9)).value);
+    System.out.println("Is BST");
+    System.out.println(t.checkIfBst(root));
   }
 }
