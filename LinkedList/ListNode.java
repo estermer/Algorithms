@@ -263,6 +263,52 @@ public class ListNode
     System.out.println(head.data +" ");
   }
 
+  public static ListNode mergeLinkedListRecursion(ListNode node1, ListNode node2) {
+    if(node1 == null) 
+      return node2;
+    if(node2 == null)
+      return node1;
+    
+    if(node1.data < node2.data) {
+      node1.next = mergeLinkedListRecursion(node1.next, node2);
+      return node1;
+    }
+    else {
+      node2.next = mergeLinkedListRecursion(node2.next, node1);
+      return node2;
+    }
+  }
+
+  public static ListNode mergeLinkedList(ListNode node1, ListNode node2) {
+    if(node1 == null)
+      return node2;
+    if(node2 == null)
+      return node1;
+
+    ListNode head;
+    // make the one with smaller data the head
+    if(node1.data < node2.data)
+      head = node1;
+    else {
+      head = node2;
+      node2 = node1;
+      node1 = head;
+    }
+
+    while(node1.next != null && node2 != null) {
+      if(node1.next.data > node2.data) {
+        ListNode temp = node1.next;
+        node1.next = node2;
+        node2 = temp; 
+      }
+      node1 = node1.next;
+    }
+    if(node1.next == null)
+      node1.next = node2;
+
+    return head;
+  }
+
   public static void main(String[] args)
   { 
     int data = 0;
