@@ -1,0 +1,188 @@
+#include <iostream>
+using namespace std;
+const int NUMBER_OF_DIRECTIONS = 8; // Number of directions the horse can go.
+const int NUMBER_OF_DIMENSIONS = 2; // Number of dimensions of space the horse can move.
+// The possible 8 directions the horse can go.
+int direction[NUMBER_OF_DIMENSIONS][NUMBER_OF_DIRECTIONS] = {
+    {-1, -1, -2, -2,  2,  2,  1,  1},
+    {-2,  2,  1, -1,  1, -1,  2, -2}};
+// Return true if [start_m][start_n] is in the board of [m][n].
+inline bool in_board(int m, int n, int start_m, int start_n) {
+    return (start_m >= 0 && start_m < m && start_n >= 0 && start_n < n);
+}
+// The recursive function to traverse all the routes in the board that the horse can go to return to its starting position.
+void traverse_routes(int* chessboard, int m, int n, int start_m, int start_n, int curr_m, int curr_n, int& number_of_routes) {
+    int next_m, next_n;
+    *(chessboard + curr_m * n + curr_n) = 1; // The horse has been in this current position.
+    for(int i = 0; i < NUMBER_OF_DIRECTIONS; ++i) { // Try every direction the horse can move.
+        next_m = curr_m + direction[0][i];
+        next_n = curr_n + direction[1][i];
+        if(in_board(m, n, next_m, next_n) && *(chessboard + next_m * n + next_n) == 0) { // If next position is in the board.
+            traverse_routes(chessboard, m, n, start_m, start_n, next_m, next_n, number_of_routes); // Go to that position can recursively traverse from that position.
+        }
+        else if(next_m == start_m && next_n == start_n) { // If next position is the starting position.
+            ++number_of_routes; // One route is found.
+        }
+    }
+    *(chessboard + curr_m * n + curr_n) = 0; // The horse has not been in this current position.
+}
+// A wrapper method for the horse route traversal problem.
+int horse_route_traversal(int m, int n, int start_m, int start_n) {
+    int* chessboard, number_of_routes;
+    // Initialization of the auxiliary memory.
+    chessboard = new int[m*n];
+    memset(chessboard, 0, m*n*sizeof(int));
+    number_of_routes = 0;
+    // Call the recursive function.
+    traverse_routes(chessboard, m, n, start_m, start_n, start_m, start_n, number_of_routes);
+    // Free dynamic-allocated memory.
+    delete[] chessboard;
+    return number_of_routes;
+}
+int main() {
+    int m, n, start_m, start_n, number_of_routes;
+    
+    // Input the parameters.
+    cout << "Input the size of chessboard (m n):" << endl;
+    cin >> m >> n;
+    while(!(m > 0 && n > 0)) {
+        cout << "m and n should be positive both." << endl;
+        cin >> m >> n;
+    }
+    cout << "Input the starting position of the horse (start_m start_n):" << endl;
+    cin >> start_m >> start_n;
+    while(!in_board(m, n, start_m, start_n)) {
+        cout << "start_m and start_n should be in [0, m) and [0, n) repectively." << endl;
+        cin >> start_m >> start_n;
+    }
+    
+    // Get the total number of the horse routes.
+    number_of_routes = horse_route_traversal(m, n, start_m, start_n);
+    
+    // Output information.
+    cout << "Board size:       " << m << "*" << n << endl;
+    cout << "Start point:      (" << start_m << ", " << start_n << ")" << endl;
+    cout << "Number of routes: " << number_of_routes << endl;
+    
+    return 0;
+}
+Notice that the indices for a position follows the convention which starts an array by ZERO. So the position (0,0) is legal and represents the leftmost and lowest position of a chessboard. Here is a test case: the board's size is 4*5, i.e., the board has 4 lines, each of which has 5 columns. The starting position is (0,0). The total number of routes is 1508. Another test case: the board's size is 4*5, and the starting position is (1,1). Then the number of routes is 4596.
+
+ 
+
+ 
+
+ 
+
+OK. What if we want to see how the horse moves and returns step by step? Then we need to store every step that the horse moves and that is contained in a legal route. The following is the modified version of program which is able to record the details of all the possible routes and save them into a file named "Horse.txt".
+
+#include <iostream>
+#include <vector>
+#include <fstream>
+using namespace std;
+const int NUMBER_OF_DIRECTIONS = 8; // Number of directions the horse can go.
+const int NUMBER_OF_DIMENSIONS = 2; // Number of dimensions of space the horse can move.
+// The possible 8 directions the horse can go.
+int direction[NUMBER_OF_DIMENSIONS][NUMBER_OF_DIRECTIONS] = {
+    {-1, -1, -2, -2,  2,  2,  1,  1},
+    {-2,  2,  1, -1,  1, -1,  2, -2}};
+// Return true if [start_m][start_n] is in the board of [m][n].
+inline bool in_board(int m, int n, int start_m, int start_n) {
+    return (start_m >= 0 && start_m < m && start_n >= 0 && start_n < n);
+}
+// The recursive function to traverse all the routes in the board that the horse can go to return to its starting position.
+void traverse_routes(int* chessboard, int m, int n, 
+                     int start_m, int start_n, int curr_m, int curr_n, 
+                     vector<pair<int, int>* >* route, vector<vector<pair<int, int>* >* >* routes) {
+    int next_m, next_n;
+    *(chessboard + curr_m * n + curr_n) = 1; // The horse has been in this current position.
+    route->push_back(new pair<int, int>(curr_m, curr_n));
+    for(int i = 0; i < NUMBER_OF_DIRECTIONS; ++i) { // Try every direction the horse can move.
+        next_m = curr_m + direction[0][i];
+        next_n = curr_n + direction[1][i];
+        if(in_board(m, n, next_m, next_n) && *(chessboard + next_m * n + next_n) == 0) { // If next position is in the board.
+            traverse_routes(chessboard, m, n, start_m, start_n, next_m, next_n, route, routes); // Go to that position can recursively traverse from that position.
+        }
+        else if(next_m == start_m && next_n == start_n) { // If next position is the starting position.
+            //++number_of_routes; // One route is found.
+            routes->push_back(new vector<pair<int, int>* >(*route));
+        }
+    }
+    *(chessboard + curr_m * n + curr_n) = 0; // The horse has not been in this current position.
+    route->pop_back();
+}
+// A wrapper method for the horse route traversal problem.
+vector<vector<pair<int, int>* >* >* horse_route_traversal(int m, int n, int start_m, int start_n) {
+    int* chessboard, number_of_routes;
+    vector<pair<int, int>* >* route;
+    vector<vector<pair<int, int>* >* >* routes;
+    // Initialization of the auxiliary memory.
+    chessboard = new int[m*n];
+    memset(chessboard, 0, m*n*sizeof(int));
+    route = new vector<pair<int, int>* >;
+    routes = new vector<vector<pair<int, int>* >* >;
+    // Call the recursive function.
+    traverse_routes(chessboard, m, n, start_m, start_n, start_m, start_n, route, routes);
+    // Free dynamic-allocated memory.
+    delete[] chessboard;
+    delete route;
+    return routes;
+}
+// Write one route to file.
+void save_route(ofstream& ofs, vector<pair<int, int>* >* route) {
+    vector<pair<int, int>* >::iterator iter, end;
+    for(iter = route->begin(), end = route->end(); iter != end; ++iter) {
+        ofs << "(" << (*iter)->first << "," << (*iter)->second << ") -> ";
+    }
+    ofs << "(" << (*route->begin())->first << "," << (*route->begin())->second << ")" << endl;
+}
+// Write all the routes to file.
+void save_routes(const char* file_name, vector<vector<pair<int, int>* >* >* routes) {
+    ofstream ofs(file_name);
+    if(routes->empty()) { // No route found.
+        ofs << "No route found." << endl;
+        cout << "Saved successfully." << endl;
+        return;
+    }
+    vector<vector<pair<int, int>* >* >::iterator iter, end;
+    for(iter = routes->begin(), end = routes->end(); iter != end; ++iter) { // Iterate every route.
+        save_route(ofs, *iter);
+    }
+    ofs << endl;
+    cout << "Saved successfully." << endl;
+}
+int main() {
+    int m, n, start_m, start_n;
+    vector<vector<pair<int, int>* >* >* routes;
+    
+    // Input the parameters.
+    cout << "Input the size of chessboard (m n):" << endl;
+    cin >> m >> n;
+    while(!(m > 0 && n > 0)) {
+        cout << "m and n should be positive both." << endl;
+        cin >> m >> n;
+    }
+    cout << "Input the starting position of the horse (start_m start_n):" << endl;
+    cin >> start_m >> start_n;
+    while(!in_board(m, n, start_m, start_n)) {
+        cout << "start_m and start_n should be in [0, m) and [0, n) repectively." << endl;
+        cin >> start_m >> start_n;
+    }
+    
+    // Get the total number of the horse routes.
+    routes = horse_route_traversal(m, n, start_m, start_n);
+    save_routes("Horse.txt", routes);
+    
+    return 0;
+}
+
+
+When executing the new program, we still input the board's size as 4*5 and the starting position as (0,0). Here is the first line of the file storing the routes, i.e., the first possible route for the horse to move and return:
+
+(0,0) -> (2,1) -> (1,3) -> (0,1) -> (2,2) -> (1,0) -> (0,2) -> (2,3) -> (1,1) -> (0,3) -> (2,4) -> (1,2) -> (0,0)
+
+And there are 1508 lines in the file. If we set the board's size as 4*5 and the starting position as (1,1), then the first line of the file is:
+
+(1,1) -> (0,3) -> (2,4) -> (1,2) -> (0,0) -> (2,1) -> (1,3) -> (0,1) -> (2,2) -> (1,0) -> (0,2) -> (2,3) -> (1,1)
+
+And there are 4596 lines in the new file.
