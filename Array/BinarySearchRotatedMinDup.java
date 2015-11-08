@@ -12,7 +12,7 @@ public class BinarySearchRotatedMinDup {
       return Math.min(findMin(num, low, mid - 1), findMin(num, mid + 1, high));
     if(mid > low && num[mid] < num[mid - 1])
       return num[mid];
-    if(num[mid] < num[high])
+    if(num[mid] <= num[high])
       return findMin(num, low, mid - 1);
     return findMin(num, mid + 1, high);
   }

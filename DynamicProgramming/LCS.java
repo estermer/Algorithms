@@ -13,7 +13,7 @@ public class LCS
         if (x.charAt(i) == y.charAt(j))
           a[i][j] = 1 + a[i+1][j+1];
         else
-          a[i][j] = Math.max(a[i+1][j], a[i][j+1]);
+          a[i][j] = Math.max(a[i + 1][j + 1], Math.max(a[i+1][j], a[i][j+1]));
       }
      }
      System.out.println("Longest length: "+a[0][0]+"\n");
