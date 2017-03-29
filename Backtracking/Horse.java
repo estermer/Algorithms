@@ -1,7 +1,6 @@
 import java.util.Scanner;
 
-class Horse
-{
+class Horse {
  static int numberOfDirections = 8;
  static int numberOfDimensions = 2;
  static int totalRoutes = 0;
@@ -44,11 +43,11 @@ class Horse
  {
   int[][] chessboard = new int[m][n];
   int noOfRoutes = 0;
-  
+
   noOfRoutes = 0;
-  
+
   traverseRoutes(chessboard, m, n, startm, startn, startm, startn);
-  
+
   return noOfRoutes;
  }
 

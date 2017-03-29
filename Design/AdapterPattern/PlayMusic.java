@@ -1,5 +1,5 @@
 public class PlayMusic {
-  
+
   public static void main(String[] args) {
     MediaPlayer mp = new IPlay();
     mp.play("Rude Magic", "mov");
